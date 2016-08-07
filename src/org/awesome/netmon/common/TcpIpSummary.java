@@ -27,7 +27,6 @@ public class TcpIpSummary {
 		return bDestIp;
 	}
 
-
 	public String getDestIp() {
 		return destIp;
 	}
@@ -70,10 +69,12 @@ public class TcpIpSummary {
 		this.bSrcIp = ip.source();
 		this.bDestIp = ip.destination();
 
-		this.srcIp = (String.valueOf((bSrcIp[0] & 0xff)) + "." + String.valueOf((bSrcIp[1] & 0xff)) + "." + String.valueOf((bSrcIp[2] & 0xff)) + "." + String.valueOf((bSrcIp[3] & 0xff)));
+		this.srcIp = (String.valueOf((bSrcIp[0] & 0xff)) + "." + String.valueOf((bSrcIp[1] & 0xff)) + "."
+				+ String.valueOf((bSrcIp[2] & 0xff)) + "." + String.valueOf((bSrcIp[3] & 0xff)));
 		this.srcPort = tcp.source();
 
-		this.destIp = (String.valueOf((bDestIp[0] & 0xff)) + "." + String.valueOf((bDestIp[1] & 0xff)) + "." + String.valueOf((bDestIp[2] & 0xff)) + "." + String.valueOf((bDestIp[3] & 0xff)));
+		this.destIp = (String.valueOf((bDestIp[0] & 0xff)) + "." + String.valueOf((bDestIp[1] & 0xff)) + "."
+				+ String.valueOf((bDestIp[2] & 0xff)) + "." + String.valueOf((bDestIp[3] & 0xff)));
 		this.destPort = tcp.destination();
 		this.flags = tcp.flags();
 
@@ -81,7 +82,7 @@ public class TcpIpSummary {
 		this.ack = tcp.ack();
 
 		this.tcpSize = tcp.getPayloadLength();
-		
+
 		Tcp.Timestamp tsource = null;
 		if (tcp.hasSubHeader(new Tcp.Timestamp())) {
 			tsource = tcp.getSubHeader(new Tcp.Timestamp());
@@ -95,7 +96,8 @@ public class TcpIpSummary {
 	public String toString() {
 		ControlFlag flag = new ControlFlag(flags);
 
-		return srcIp + ":" + srcPort + " ==> " + destIp + ":" + destPort + " " + flag + " seq: " + seq + " ack: " + ack + " tsval: " + tsval + " tsecr: " + tsecr + " size: " + tcpSize;
+		return srcIp + ":" + srcPort + " ==> " + destIp + ":" + destPort + " " + flag + " seq: " + seq + " ack: " + ack
+				+ " tsval: " + tsval + " tsecr: " + tsecr + " size: " + tcpSize;
 	}
 
 }

@@ -10,7 +10,6 @@ import org.jnetpcap.protocol.tcpip.Udp;
 
 public class JPacketHandler implements PcapPacketHandler<String> {
 	public void nextPacket(PcapPacket packet, String user) {
-		// packet이 tcp일 경우에만 동작.
 		if (packet.hasHeader(new Udp())&&packet.hasHeader(new Ip4())){
 			Ip4 ip = packet.getHeader(new Ip4());
 			

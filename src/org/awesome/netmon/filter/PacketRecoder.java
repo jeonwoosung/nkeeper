@@ -12,11 +12,11 @@ import org.jnetpcap.protocol.tcpip.Tcp;
 public class PacketRecoder implements Filter {
 
 	@Override
-	public void doFilter(PcapPacket packet) {
+	public void doFilter(final PcapPacket packet) {
 		if(true)
 			return;
 		
-		Tcp tcp = packet.getHeader(new Tcp());
+		final Tcp tcp = packet.getHeader(new Tcp());
 		PortLoop loop = new PortLoop() {
 			public boolean loop(int port) {
 				if ((tcp.destination() == port || tcp.source() == port) && (tcp.flags() == (ControlFlag.ACK | ControlFlag.FIN))) {

@@ -24,8 +24,8 @@ public class PortFilter implements Filter {
 
 	@Override
 	public void doFilter(PcapPacket packet) {
-		Tcp tcp = packet.getHeader(new Tcp());
-		Ip4 ip = packet.getHeader(new Ip4());
+		final Tcp tcp = packet.getHeader(new Tcp());
+		final Ip4 ip = packet.getHeader(new Ip4());
 
 		PortLoop loop = new PortLoop() {
 			public boolean loop(int port) {
