@@ -87,7 +87,8 @@ public class TcpIpSummaryJson {
 		this.srcPort = tcp.source();
 
 		try {
-			this.srcDomain= InetAddress.getByName(srcIp).getHostName();
+			String name = InetAddress.getByName(srcIp).getHostName();
+			this.srcDomain= !srcIp.equals(name)?name:null;
 		} catch (UnknownHostException e) {
 		}
 
@@ -96,7 +97,8 @@ public class TcpIpSummaryJson {
 		this.destPort = tcp.destination();
 
 		try {
-			this.destDomain= InetAddress.getByName(destIp).getHostName();
+			String name = InetAddress.getByName(destIp).getHostName();
+			this.destDomain= !destIp.equals(name)?name:null;
 		} catch (UnknownHostException e) {
 		}
 
