@@ -7,7 +7,7 @@ public class Conf {
 	private static Hashtable<String, Object> map= new Hashtable<String, Object>();
 	
 	static{
-		map.put("blockport", "23,80,22,21,20,162");
+		map.put("blockport", "9200,5601");
 	}
 	
 	public static String get(String key){

@@ -1,6 +1,7 @@
 package org.awesome.netmon.common;
 
-import java.util.Date;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import org.jnetpcap.packet.PcapPacket;
 import org.jnetpcap.protocol.network.Ip4;
@@ -12,20 +13,47 @@ public class TcpIpSummaryJson {
 	private String srcIp;
 	private int srcPort;
 	private int destPort;
-	private int flags;
-	private long seq;
-	private long ack;
-	private long tsval;
-	private long tsecr;
-	private int tcpSize;
-	private String ts;
+	private String flags;
+	// private long seq;
+	// private long ack;
+	// private long tsval;
+	// private long tsecr;
+	private int payloadLength;
 
-	public String getTs() {
+	public int getPayloadLength() {
+		return payloadLength;
+	}
+
+	public void setPayloadLength(int tcpSize) {
+		this.payloadLength = tcpSize;
+	}
+
+	private long ts;
+	public String getSrcDomain() {
+		return srcDomain;
+	}
+
+	public void setSrcDomain(String srcDomain) {
+		this.srcDomain = srcDomain;
+	}
+
+	public String getDestDomain() {
+		return destDomain;
+	}
+
+	public void setDestDomain(String destDomain) {
+		this.destDomain = destDomain;
+	}
+
+	private String srcDomain;
+	private String destDomain;
+
+	public long getTs() {
 		return ts;
 	}
 
-	public void setTs(String string) {
-		this.ts = string;
+	public void setTs(long l) {
+		this.ts = l;
 	}
 
 	public String getDestIp() {
@@ -44,24 +72,8 @@ public class TcpIpSummaryJson {
 		return destPort;
 	}
 
-	public int getFlags() {
+	public String getFlag() {
 		return flags;
-	}
-
-	public long getSeq() {
-		return seq;
-	}
-
-	public long getAck() {
-		return ack;
-	}
-
-	public long getTsval() {
-		return tsval;
-	}
-
-	public long getTsecr() {
-		return tsecr;
 	}
 
 	public TcpIpSummaryJson(PcapPacket packet) {
@@ -74,32 +86,36 @@ public class TcpIpSummaryJson {
 				+ String.valueOf((bSrcIp[2] & 0xff)) + "." + String.valueOf((bSrcIp[3] & 0xff)));
 		this.srcPort = tcp.source();
 
+		try {
+			this.srcDomain= InetAddress.getByName(srcIp).getHostName();
+		} catch (UnknownHostException e) {
+		}
+
 		this.destIp = (String.valueOf((bDestIp[0] & 0xff)) + "." + String.valueOf((bDestIp[1] & 0xff)) + "."
 				+ String.valueOf((bDestIp[2] & 0xff)) + "." + String.valueOf((bDestIp[3] & 0xff)));
 		this.destPort = tcp.destination();
-		this.flags = tcp.flags();
 
-		this.seq = tcp.seq();
-		this.ack = tcp.ack();
-
-		this.tcpSize = tcp.getPayloadLength();
-
-		Tcp.Timestamp tsource = null;
-		if (tcp.hasSubHeader(new Tcp.Timestamp())) {
-			tsource = tcp.getSubHeader(new Tcp.Timestamp());
-			this.tsval = tsource.tsval();
-			this.tsecr = tsource.tsecr();
-
+		try {
+			this.destDomain= InetAddress.getByName(destIp).getHostName();
+		} catch (UnknownHostException e) {
 		}
 
+
+		ControlFlag f = new ControlFlag(tcp.flags());
+		this.flags = f.toString();
+
+		// this.ack = tcp.ack();
+
+		this.payloadLength = tcp.getPayloadLength();
+
 	}
 
-	public String toString() {
-		ControlFlag flag = new ControlFlag(flags);
-
-		return srcIp + ":" + srcPort + " ==> " + destIp + ":" + destPort + " " + flag + " seq: " + seq + " ack: " + ack
-				+ " tsval: " + tsval + " tsecr: " + tsecr + " size: " + tcpSize;
-	}
-
+	// public String toString() {
+	// ControlFlag flag = new ControlFlag(flags);
+	//
+	// return srcIp + ":" + srcPort + " ==> " + destIp + ":" + destPort + " " +
+	// flag + " seq: " + seq + " ack: " + ack
+	// + " tsval: " + tsval + " tsecr: " + tsecr + " size: " + tcpSize;
+	// }
 
 }

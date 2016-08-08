@@ -1,10 +1,7 @@
 package org.awesome.netmon.filter;
 
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.net.InetAddress;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,7 +10,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.awesome.netmon.common.PortLoop;
-import org.awesome.netmon.common.TcpIpSummary;
 import org.awesome.netmon.common.TcpIpSummaryJson;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jnetpcap.packet.PcapPacket;
@@ -32,25 +28,19 @@ public class StoreFilter implements Filter {
 
 	@Override
 	public void doFilter(final PcapPacket packet) {
-//		final TcpIpSummary s = new TcpIpSummary(packet);
+//		 final TcpIpSummary s = new TcpIpSummary(packet);
 
 		final TcpIpSummaryJson s = new TcpIpSummaryJson(packet);
 		PortLoop loop = new PortLoop() {
 			public boolean loop(int port) {
-				if (s.getDestPort() == port || s.getSrcPort() == port) {
-					
-					
+				if (s.getDestPort() != port && s.getSrcPort() != port) {
 
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
-//					System.out.println( sdf.format(new  Date()) );
+					s.setTs(System.currentTimeMillis());
+//					System.out.println(System.currentTimeMillis() + " " + s);
 
-					s.setTs(sdf.format(new  Date()));
-
-					System.out.println(System.currentTimeMillis() + " " + s);
-
-					if(s.getDestIp().equals("175.126.112.84"))
+					if (s.getDestIp().equals("175.126.112.84"))
 						return true;
-					
+
 					// JSONObject o new JSONObject(s);
 
 					ObjectMapper mapper = new ObjectMapper();
@@ -64,7 +54,7 @@ public class StoreFilter implements Filter {
 						System.out.println(j);
 
 						HttpClient httpclient = HttpClientBuilder.create().build();
-						HttpPost p = new HttpPost("http://175.126.112.84:9200/blog/post/"+System.currentTimeMillis());
+						HttpPost p = new HttpPost("http://175.126.112.84:9200/blog/post/" + System.currentTimeMillis());
 
 						ByteArrayEntity e = new ByteArrayEntity(j.getBytes());
 
@@ -81,20 +71,18 @@ public class StoreFilter implements Filter {
 							i = is.read();
 							b.append((char) i);
 						}
-						
-						System.out.println(b.toString());
+
+//						System.out.println(b.toString());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					
-					
+
 					return true;
 				}
 				return false;
 			}
 		};
 		loop.start();
-
 
 		nextFilter.doFilter(packet);
 	}
